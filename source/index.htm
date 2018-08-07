@@ -1,24 +1,6 @@
 <!doctype html>
 <html lang="en">
-<style>
-#messages
-{
-background-color:yellow;
-font-size:3;
-font-weight:bold;
-line-height:140%;
-}
-#status
-{
-background-color:red;
-font-size:4;
-font-weight:bold;
-color:white;
-line-height:140%;
-}
 
-
-</style>
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -27,9 +9,8 @@ line-height:140%;
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title>Bühler IoT Racing</title>
 
-    <title>Websockets Using JavaScript MQTT Client</title>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -39,134 +20,76 @@ line-height:140%;
    	<!--<script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 
-  <script type = "text/javascript">
 
-	function onConnectionLost(){
-  	console.log("connection lost");
-	  document.getElementById("status").innerHTML = "Connection Lost";
-  	document.getElementById("status_messages").innerHTML ="Connection Lost";
-	  connected_flag=0;
-	}
-
-	function onFailure(message) {
-		console.log("Failed");
-		document.getElementById("status_messages").innerHTML = "Connection Failed- Retrying";
-    setTimeout(MQTTconnect, reconnectTimeout);
-  }
-
-	function onMessageArrived(r_message){
-		out_msg="Message received "+r_message.payloadString;
-		out_msg=out_msg+"      Topic "+r_message.destinationName +"<br/>";
-		out_msg="<b>"+out_msg+"</b>";
-
-    // update graphs here
-  }
-
-	function onConnected(recon,url){
-	  console.log(" in onConnected " +reconn);
-	}
-
-	function onConnect() {
-	  // Once a connection has been made, make a subscription and send a message.
-	  document.getElementById("status_messages").innerHTML ="Connected to "+host +"on port "+port;
-	  connected_flag=1;
-	  document.getElementById("status").innerHTML = "Connected";
-	  console.log("on Connect "+connected_flag);
-    sub_topics()
-	}
-
-  function disconnect(){
-		if (connected_flag==1)
-			mqtt.disconnect();
-	  }
-
-  function MQTTconnect() {
-	  var clean_sessions=true;
-	  var user_name="";
-	  var password="";
-
-	  document.getElementById("status_messages").innerHTML ="";
-	  var s = "test.mosquitto.org";
-	  var p = "8080";
-	  if (p!="") {
-		  port=parseInt(p);
-		}
-	  if (s!="") {
-		  host=s;
-		}
-
-	  console.log("connecting to "+ host +" "+ port +"clean session="+clean_sessions);
-	  console.log("user "+user_name);
-	  document.getElementById("status_messages").innerHTML='Connecting';
-	  mqtt = new Paho.MQTT.Client(host,port,"clientjsaaa"); //TODO make client UUID
-
-	  var options = {
-      timeout: 3,
-		  cleanSession: clean_sessions,
-		  onSuccess: onConnect,
-		  onFailure: onFailure,
-    };
-
-	  if (user_name !="")
-		  options.userName=user_name;
-	  if (password !="")
-		  options.password=password;
-
-    mqtt.onConnectionLost = onConnectionLost;
-    mqtt.onMessageArrived = onMessageArrived;
-    mqtt.onConnected = onConnected;
-	  mqtt.connect(options);
-	  return false;
-	}
-
-	function sub_topics(){
-		document.getElementById("status_messages").innerHTML ="";
-		if (connected_flag==0){
-		  out_msg="<b>Not Connected so can't subscribe</b>"
-		  console.log(out_msg);
-		  document.getElementById("status_messages").innerHTML = out_msg;
-		  return false;
-		}
-	  var stopic= "RBCube-0023a7c828e0";
-	  var sqos=0;
-	  if (sqos>2)
-		  sqos=0;
-	  console.log("Subscribing to topic ="+stopic +" QOS " +sqos);
-	  document.getElementById("status_messages").innerHTML = "Subscribing to topic ="+stopic;
-	  var soptions={qos:sqos,};
-
-	  mqtt.subscribe(stopic,soptions);
-	  return false;
-	}
-
-	function send_message(){
-    // sending disabled
-		return false;
-	}
-
-MQTTconnect();
-
-    </script>
   </head>
+  <style>
 
+  #header{
+    background-image:url('header.JPG');
+    background-size: cover;
+  }
+  #header h1{
+        color:#ffffff;
+        font-weight: 500;
+        text-shadow: 2px 2px 4px #000000
+  }
+  #header p{
+        color:#ffffff;
+        font-weight: 500;
+        text-shadow: 2px 2px 4px #000000
+  }
+  .myCard{
+    background-color: rgba(25, 25, 25, .9) !important;
+  }
+  #cardHeader1 {
+    background-color: rgba(25, 25, 25, .9) !important;
+    color: white;
+  }
+
+  #messages
+  {
+  background-color:yellow;
+  font-size:3;
+  font-weight:bold;
+  line-height:140%;
+  }
+
+  </style>
   <body>
-<h1>Websockets MQTT Monitor</h1>
 
-<div id="status">Connection Status: Not Connected</div>
-Status Messages:
-<div id="status_messages">
-</div>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div id="header" class="jumbotron">
+      <div class="container">
+        <div  class="card bg-light mb-3 myCard" style="max-width: 600rem;">
+      <div id="cardHeader" class="card-body">
+        <h1 class="display-3">Bühler IoT Racecar Showcase</h1>
+        <p>Bühler offers a wide range of digital services and that can be applied to virtually any machine on the plant floor, or even on a race car!</p>
+        <p><a class="btn btn-primary btn-lg" href="https://digital.buhlergroup.com/" role="button">Learn more &raquo;</a></p>
+      </div></div></div>
+    </div>
 
-<div class="container">
+
+<div id="graphs" class="container">
+
+  <div id="status" class="alert alert-danger" role="alert">
+    Connection Status: Not Connected
+  </div>
+
+  <div style="height: 740px; background-color: rgba(255,0,0,0.1);">
+    <div class="card bg-light mb-3" style="max-width: 600rem;">
+  <div class="card-header">BCube Racecar Telemetry</div>
+  <div class="card-body">
+
+
   <div class="row">
     <div class="col-md-10">
 <div>
-      <canvas id="chart-lateral" class="chartjs" width="100px" height="100px"></canvas>
+      <canvas id="chart-lateral" class="chartjs" width="520px" height="520px"></canvas>
     </div>
     </div>
     <div class="col-md-2">
       <div>
-      <canvas id="chart-vertical" class="chartjs" width="100px" height="580px"></canvas>
+      <canvas id="chart-vertical" class="chartjs" width="100px" height="520px"></canvas>
     </div>
     </div>
   </div>
@@ -179,19 +102,167 @@ Status Messages:
   </div>
 </div>
 </div>
+</div>
 
-	<script>
+</div>
+</div>
+<br>
+<div class="container" style="position:relative;">
+<footer>
+                <img alt="Buhler Logo" class="auto-style1" src="jr_footer.png" />
+                <img alt="Buhler Logo" class="auto-style1" align="right" src="Buhler_RGB_100.gif" />
+                <p>&copy; 2018 - Jenkins Racing</p><br>
+            </footer>
+
+</div>
+
+
+<script type = "text/javascript">
+
+var bCubeData = {accelX: 0, accelY: 0, accelZ: 0, temp: 0};
+
+function onConnectionLost(responseObject) {
+  console.log("connection lost");
+  setAlert("Connection Lost", "alert-danger")
+  connected_flag=0;
+
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:"+responseObject.errorMessage);
+  }
+}
+
+function onFailure(message) {
+  console.log("Failed");
+  setAlert("Connection Failed- Retrying", "alert-danger")
+  setTimeout(MQTTconnect, reconnectTimeout);
+}
+
+function onMessageArrived(r_message){
+  var rValue = 10;
+
+  // update graphs here
+  var payload = JSON.parse(r_message.payloadString);
+
+  bCubeData.accelX = (payload['X']/10)
+  bCubeData.accelY = (payload['Y']/10) * -1; //invert force
+  bCubeData.accelZ = ((payload['Z']/10) - 1) * -1; // invert force and correct for gravity
+  bCubeData.temp = payload['tempOnBoardInC'];
+
+  console.log(bCubeData);
+
+  rValue = bCubeData.accelX * bCubeData.accelY * 10;
+
+  if (rValue < 10) {
+    rValue = 10;
+  }
+
+  chart1.config.data.datasets[0].data = [{x:bCubeData.accelY,y:bCubeData.accelX,r:rValue},];
+  chart2.config.data.datasets[0].data = [bCubeData.accelZ,];
+  chart3.config.data.datasets[0].data = [bCubeData.temp,];
+
+  chart1.update();
+  chart2.update();
+  chart3.update();
+}
+
+function onConnected(recon,url){
+  console.log(" in onConnected " +reconn);
+}
+
+function onConnect() {
+  // Once a connection has been made, make a subscription
+  connected_flag=1;
+  setAlert("Connected", "alert-warning")
+  document.getElementById("status").innerHTML = "Connected";
+  console.log("onConnect connected_flag is "+connected_flag);
+
+  //mqtt.subscribe("RBCube-0023a7c828e0");
+  sub_topics()
+}
+
+function disconnect(){
+  if (connected_flag==1)
+    mqtt.disconnect();
+  }
+
+function MQTTconnect() {
+  var clean_sessions=true;
+  var user_name="";
+  var password="";
+
+  var s = "test.mosquitto.org";
+  var p = "8080";
+  if (p!="") {
+    port=parseInt(p);
+  }
+  if (s!="") {
+    host=s;
+  }
+
+  console.log("connecting to "+ host +" "+ port +"clean session="+clean_sessions);
+  console.log("user "+user_name);
+  setAlert("Connecting", "alert-warning")
+  mqtt = new Paho.MQTT.Client(host,port,"clientjsaaa"); //TODO make client UUID
+
+  var options = {
+    timeout: 3,
+    cleanSession: clean_sessions,
+    onSuccess: onConnect,
+    onFailure: onFailure,
+  };
+
+  if (user_name !="")
+    options.userName=user_name;
+  if (password !="")
+    options.password=password;
+
+  mqtt.onConnectionLost = onConnectionLost;
+  mqtt.onMessageArrived = onMessageArrived;
+  mqtt.onConnected = onConnected;
+  mqtt.connect(options);
+}
+
+function sub_topics(){
+  if (connected_flag==0){
+    console.log("Not Connected so can't subscribe");
+    return false;
+  }
+  var stopic= "RBCube-0023a7c828e0";
+  var sqos=0;
+  if (sqos>2)
+    sqos=0;
+  console.log("Subscribing to topic: "+stopic +" QOS " +sqos);
+  var soptions={qos:sqos,};
+
+  mqtt.subscribe(stopic,soptions);
+  setAlert("Connected and Subscribed", "alert-success")
+  return false;
+}
+
+function send_message(){
+  // sending disabled
+  return false;
+}
+
+
+MQTTconnect();
+
+function setAlert(aString, aClass){
+  document.getElementById("status").innerHTML = aString;
+  document.getElementById("status").className = "alert " + aClass;
+}
   var data1 = {
     datasets:[{
-      label:"First Dataset",
+      label:"Lateral Gs Data",
       data:[
-        {x:1.0,y:1.5,r:20},
+        {x:0,y:0,r:20},
         ],
     backgroundColor:"rgb(255, 99, 132)"}]};
 
   var options1 = {
+    //labels:["Left and Right Gs", "Accel and Decel Gs"], FIXME add labels
     //aspectRatio: 1,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     responsive: true,
     legend: false,
     tooltips: false,
@@ -218,15 +289,15 @@ Status Messages:
 
 // bar graph for verticl gs
   var data2 = {
-    labels:["Gs",],
+    labels:[" Vertical Gs",],
     datasets:[{
-      label:"First Dataset",
-      data:[-2,],
+      label:"Vertical Gs Data",
+      data:[0,],
     backgroundColor:"rgb(255, 99, 132)"}]};
 
   var options2 = {
     aspectRatio: 1,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     responsive: true,
     legend: false,
     tooltips: false,
@@ -249,8 +320,8 @@ Status Messages:
   var data3 = {
     labels:["Temperature",],
     datasets:[{
-      label:"First Dataset",
-      data:[35,],
+      label:"Temperature Data",
+      data:[0,],
     backgroundColor:"rgb(255, 99, 132)"}]};
 
   var options3 = {
