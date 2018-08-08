@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Bühler IoT Racing</title>
+    <title>Bühler IoT Telemetry</title>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -63,8 +63,8 @@
         <div  class="card bg-light mb-3 myCard" style="max-width: 600rem;">
       <div id="cardHeader" class="card-body">
         <h1 class="display-3">Bühler IoT Racecar Showcase</h1>
-        <p>Bühler offers a wide range of digital services and that can be applied to virtually any machine on the plant floor, or even on a race car!</p>
-        <p><a class="btn btn-primary btn-lg" href="https://digital.buhlergroup.com/" role="button">Learn more &raquo;</a></p>
+        <p>Bühler offers a wide range of digital services that can be applied to virtually any machine, even a racecar!</p>
+        <p><button type="button" class="btn btn-primary btn-lg" onclick="window.open('https://digital.buhlergroup.com/')">Learn more &raquo;</button></p>
       </div></div></div>
     </div>
 
@@ -109,8 +109,8 @@
 <br>
 <div class="container" style="position:relative;">
 <footer>
-                <img alt="Buhler Logo" class="auto-style1" src="jr_footer.png" />
-                <img alt="Buhler Logo" class="auto-style1" align="right" src="Buhler_RGB_100.gif" />
+                <a href="http://jenkinsracing.com/"><img alt="Buhler" class="auto-style1" src="jr_footer.png" /></a>
+                <a href="http://buhlergroup.com/"><img alt="Jenkins Racing" class="auto-style1" align="right" src="Buhler_RGB_100.gif" /></a>
                 <p>&copy; 2018 - Jenkins Racing</p><br>
             </footer>
 
@@ -122,8 +122,8 @@
 var bCubeData = {accelX: 0, accelY: 0, accelZ: 0, temp: 0};
 
 function onConnectionLost(responseObject) {
-  console.log("connection lost");
-  setAlert("Connection Lost", "alert-danger")
+  console.log("Connection lost");
+  setAlert("Connection Lost - Telemetry Offline", "alert-danger")
   connected_flag=0;
 
   if (responseObject.errorCode !== 0) {
@@ -145,10 +145,10 @@ function onMessageArrived(r_message){
 
   bCubeData.accelX = (payload['X']/10)
   bCubeData.accelY = (payload['Y']/10) * -1; //invert force
-  bCubeData.accelZ = ((payload['Z']/10) - 1) * -1; // invert force and correct for gravity
+  bCubeData.accelZ = (payload['Z']/10) * -1; // invert force
   bCubeData.temp = payload['tempOnBoardInC'];
 
-  console.log(bCubeData);
+  //console.log(bCubeData);
 
   rValue = bCubeData.accelX * bCubeData.accelY * 10;
 
@@ -166,7 +166,7 @@ function onMessageArrived(r_message){
 }
 
 function onConnected(recon,url){
-  console.log(" in onConnected " +reconn);
+  console.log("onConnected " +reconn);
 }
 
 function onConnect() {
@@ -189,6 +189,7 @@ function MQTTconnect() {
   var clean_sessions=true;
   var user_name="";
   var password="";
+  var client_id;
 
   var s = "test.mosquitto.org";
   var p = "8080";
@@ -199,10 +200,13 @@ function MQTTconnect() {
     host=s;
   }
 
-  console.log("connecting to "+ host +" "+ port +"clean session="+clean_sessions);
+  client_id = generateQuickGuid();
+
+  console.log("connecting to "+ host +" "+ port +" clean session="+clean_sessions);
   console.log("user "+user_name);
+  console.log("client id "+client_id);
   setAlert("Connecting", "alert-warning")
-  mqtt = new Paho.MQTT.Client(host,port,"clientjsaaa"); //TODO make client UUID
+  mqtt = new Paho.MQTT.Client(host,port, client_id); //TODO make client UUID
 
   var options = {
     timeout: 3,
@@ -251,6 +255,12 @@ function setAlert(aString, aClass){
   document.getElementById("status").innerHTML = aString;
   document.getElementById("status").className = "alert " + aClass;
 }
+
+function generateQuickGuid() {
+  return Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
+  }
+
   var data1 = {
     datasets:[{
       label:"Lateral Gs Data",
@@ -258,6 +268,9 @@ function setAlert(aString, aClass){
         {x:0,y:0,r:20},
         ],
     backgroundColor:"rgb(255, 99, 132)"}]};
+
+
+
 
   var options1 = {
     //labels:["Left and Right Gs", "Accel and Decel Gs"], FIXME add labels
@@ -269,14 +282,16 @@ function setAlert(aString, aClass){
     scales: {
             xAxes: [{
                 ticks: {
-                    suggestedMin: -3,
-                    suggestedMax: 3
+                    suggestedMin: -2.5,
+                    suggestedMax: 2.5,
+                    stepSize: .5
                 }
             }],
             yAxes: [{
                 ticks: {
-                    suggestedMin: -3,
-                    suggestedMax: 3
+                    suggestedMin: -2.5,
+                    suggestedMax: 2.5,
+                    stepSize: .5
                 }
             }]
         },
@@ -304,8 +319,9 @@ function setAlert(aString, aClass){
     scales: {
             yAxes: [{
                 ticks: {
-                    min: -3,
-                    max: 3
+                    min: -2.5,
+                    max: 2.5,
+                    stepSize: .5
                 }
             }]
         },
@@ -322,7 +338,7 @@ function setAlert(aString, aClass){
     datasets:[{
       label:"Temperature Data",
       data:[0,],
-    backgroundColor:"rgb(255, 99, 132)"}]};
+    backgroundColor:"rgb(255, 99, 83)"}]};
 
   var options3 = {
     //aspectRatio: 1,
